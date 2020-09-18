@@ -1,13 +1,10 @@
-import React, {Component} from 'react';
+import React, {Component, Suspense} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Link} from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import PropTypes from 'prop-types';
-import MyButton from '../../util/MyButton';
-import DeleteScream from './DeleteScream';
-import ScreamDialog from './ScreamDialog';
-import LikeButton from './LikeButton';
+
 // MUI Stuff
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -17,6 +14,15 @@ import Typography from '@material-ui/core/Typography';
 import ChatIcon from '@material-ui/icons/Chat';
 // Redux
 import {connect} from 'react-redux';
+
+import MyButton from '../../util/MyButton';
+/*import DeleteScream from './DeleteScream';
+import ScreamDialog from './ScreamDialog';
+import LikeButton from './LikeButton';*/
+
+const DeleteScream = React.lazy(() => import('./DeleteScream.js'))
+const ScreamDialog = React.lazy(() => import('./ScreamDialog.js'))
+const LikeButton = React.lazy(() => import('./LikeButton.js'))
 
 const styles = {
     card: {
@@ -55,7 +61,10 @@ class Scream extends Component {
 
         const deleteButton =
             authenticated && userHandle === handle ? (
-                <DeleteScream screamId={screamId}/>
+                <Suspense fallback={<div>loading ..</div>}>
+                    <DeleteScream screamId={screamId}/>
+                </Suspense>
+
             ) : null;
         return (
             <Card className={classes.card}>
@@ -78,17 +87,21 @@ class Scream extends Component {
                         {dayjs(createdAt).fromNow()}
                     </Typography>
                     <Typography variant="body1">{body}</Typography>
-                    <LikeButton screamId={screamId}/>
+                    <Suspense fallback={<div>loading ..</div>}>
+                        <LikeButton screamId={screamId}/>
+                    </Suspense>
                     <span>{likeCount} Likes</span>
                     <MyButton tip="comments">
                         <ChatIcon color="primary"/>
                     </MyButton>
                     <span>{commentCount} comments</span>
-                    <ScreamDialog
-                        screamId={screamId}
-                        userHandle={userHandle}
-                        openDialog={this.props.openDialog}
-                    />
+                    <Suspense fallback={<div>loading ..</div>}>
+                        <ScreamDialog
+                            screamId={screamId}
+                            userHandle={userHandle}
+                            openDialog={this.props.openDialog}
+                        />
+                    </Suspense>
                 </CardContent>
             </Card>
         );

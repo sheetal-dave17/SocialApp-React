@@ -99,7 +99,7 @@ class PostScream extends Component {
                                 multiline
                                 rows="3"
                                 placeholder="Scream at your fellow apes"
-                                error={errors.body ? true : false}
+                                error={!!errors.body}
                                 helperText={errors.body}
                                 className={classes.textField}
                                 onChange={this.handleChange}

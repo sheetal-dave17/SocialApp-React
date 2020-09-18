@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React,  {Component, Suspense} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import './App.css';
 import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles'
@@ -9,10 +9,9 @@ import {Provider} from 'react-redux';
 import store from './redux/store';
 import {SET_AUTHENTICATED} from './redux/types';
 import {logoutUser, getUserData} from './redux/actions/userActions';
-// Components
-import Navbar from './components/layout/Navbar';
+
 import themeObject from './util/theme';
-import AuthRoute from './util/AuthRoute';
+
 // Pages
 import home from './pages/home';
 import login from './pages/login';
@@ -21,10 +20,14 @@ import user from './pages/user';
 
 import axios from 'axios';
 
+// Components
+import AuthRoute from "./util/AuthRoute";
+const Navbar = React.lazy(()=>import('./components/layout/Navbar'));
+
 const theme = createMuiTheme(themeObject);
 
-axios.defaults.baseURL =
-    'https://europe-west1-socialape-d081e.cloudfunctions.net/api';
+/*axios.defaults.baseURL = 'https://us-central1-socialapp-d0137.cloudfunctions.net/api';*/
+axios.defaults.baseURL = 'https://europe-west1-socialape-d081e.cloudfunctions.net/api';
 
 const token = localStorage.FBIdToken;
 if (token) {
@@ -45,7 +48,10 @@ class App extends Component {
             <MuiThemeProvider theme={theme}>
                 <Provider store={store}>
                     <Router>
-                        <Navbar/>
+                        <Suspense fallback={<div>loading ..</div>}>
+                            <Navbar/>
+                        </Suspense>
+
                         <div className="container">
                             <Switch>
                                 <Route exact path="/" component={home}/>
